@@ -1,11 +1,17 @@
-import type { FC } from "react"
+import { useState, type FC } from "react"
 import { Bell, Paw, Plus } from "./Icons"
 import "./NavBar.css"
+import AddPostModal from "./AddPostModal"
 
 const Navbar: FC = () => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
   const handleAddClick = () => {
-    // Logic to open the add pet modal goes here
-    console.log("Add Pet button clicked")
+    setIsAddModalOpen(true)
+  }
+
+  const handleAddModalClose = () => {
+    setIsAddModalOpen(false)
   }
 
   const handleNotifClick = () => {
@@ -18,22 +24,26 @@ const Navbar: FC = () => {
     console.log("Profile button clicked")
   }
   return (
-    <div className="navbar">
-      <div className="logo">
-        PetPet
-        <Paw />
+    <>
+      <div className="navbar">
+        <div className="logo">
+          PetPet
+          <Paw />
+        </div>
+        <div className="nav-links">
+          <a onClick={handleAddClick}>
+            <Plus />
+            Ajouter
+          </a>
+          <a onClick={handleNotifClick}>
+            <Bell />
+          </a>
+          <a onClick={handleProfileClick}>Profil</a>
+        </div>
       </div>
-      <div className="nav-links">
-        <a onClick={handleAddClick}>
-          <Plus />
-          Ajouter
-        </a>
-        <a onClick={handleNotifClick}>
-          <Bell />
-        </a>
-        <a onClick={handleProfileClick}>Profil</a>
-      </div>
-    </div>
+
+      <AddPostModal isOpen={isAddModalOpen} onClose={handleAddModalClose} />
+    </>
   )
 }
 
