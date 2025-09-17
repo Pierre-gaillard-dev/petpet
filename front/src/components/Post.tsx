@@ -22,7 +22,17 @@ const Post: FC<PostProps> = ({ post }) => {
         <h2>{post.user.username}</h2>
         <p>{new Date(post.createdAt).toLocaleDateString()}</p>
       </div>
-      <img src={post.img} alt={post.description} className="post-image" />
+      <div className="image-container">
+        <img
+          src={post.img}
+          alt={post.description}
+          className="post-image"
+          onDoubleClick={handleLike}
+        />
+        <div className="like-animation">
+          <Paw />
+        </div>
+      </div>
       <p className="post-description">{post.description}</p>
       <div className="like-section">
         <a onClick={handleLike}>

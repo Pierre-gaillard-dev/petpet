@@ -50,13 +50,17 @@ const Navbar: FC = () => {
           <Paw />
         </Link>
         <div className="nav-links">
-          <a onClick={handleAddClick}>
-            <Plus />
-            Ajouter
-          </a>
-          <a onClick={handleNotifClick}>
-            <Bell />
-          </a>
+          {user && (
+            <>
+              <a onClick={handleAddClick}>
+                <Plus />
+                Ajouter
+              </a>
+              <a onClick={handleNotifClick}>
+                <Bell />
+              </a>
+            </>
+          )}
           <div className="profile">
             <Link onClick={handleProfileClick} to={user ? "" : "/login"}>
               <Profile />
