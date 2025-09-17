@@ -8,28 +8,33 @@ datasource db {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  username  String @unique
-  email     String
-  password  String
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String
+  password String
 
-  likes     UserLike[]
+  likes UserLike[]
+  Post  Post[]
 }
 
 model Post {
-  id           Int     @id @default(autoincrement())
-  description  String?
-  image_path   String
+  id          Int     @id @default(autoincrement())
+  description String?
+  image_path  String
+  createdAt   DateTime
+  updatedAt   DateTime
+  userId      Int
 
-  likedBy   UserLike[]
+  user    User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likedBy UserLike[]
 }
 
 model UserLike {
   userId Int
   postId Int
 
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
 }

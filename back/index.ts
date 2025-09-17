@@ -1,9 +1,12 @@
-import { Post, PrismaClient, User, UserLike } from "@prisma/client";
+import { Post, PrismaClient, User } from "@prisma/client";
 import express, { NextFunction, Request, Response } from "express";
 import 'dotenv/config';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+import multer from "multer";
+import fs from 'fs/promises';
+import path from "path";
 
 interface UserSession {
   id: number;
@@ -19,11 +22,20 @@ declare module 'express-serve-static-core' {
   }
 }
 
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
 const prefix = '/api';
 
 const prisma = new PrismaClient();
 
 const app = express();
+const upload = multer({ storage })
 app.use(express.json());
 app.use(cookieParser());
 app.listen(process.env.PORT, () => {
@@ -44,7 +56,7 @@ async function verifyPasswordUser(email: string, password: string): Promise<User
 async function verifyToken(req: Request, res: Response, next: NextFunction) {
     const token = req.cookies?.token;
     if (!token) {
-    return res.status(401).json({ message: 'Not logged in.' });
+    return res.status(401).json({ error: 'Not logged in.' });
   }
 
   try {
@@ -52,14 +64,14 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     req.userSession = decoded
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 }
 
 async function findPost(req: Request, res: Response, next: NextFunction) {
     const { postId } = req.body;
     if (!postId) {
-        return res.status(404).json({ message: "Post ID missing in body." })
+        return res.status(404).json({ error: "Post ID missing in body." })
     }
     const post = await prisma.post.findFirst({
         where: {
@@ -67,7 +79,7 @@ async function findPost(req: Request, res: Response, next: NextFunction) {
         }
     });
     if (!post) {
-        return res.status(404).json({ message: "Post not found." })
+        return res.status(404).json({ error: "Post not found." })
     }
     req.post = post;
     next();
@@ -129,6 +141,63 @@ app.get(prefix + '/posts', async (req: Request, res: Response) => {
     return res.status(200).json({ posts })
 });
 
+app.post(prefix + '/post', verifyToken, upload.single('image'), async (req: Request, res: Response) => {
+    const user = req.userSession;
+    const { description } = req.body;
+    const image = req.file;
+    if (!image) {
+        return res.status(403).json({ error: "Missing file image!" })
+    }
+    const now = new Date();
+    const post = await prisma.post.create({
+        data: {
+            image_path: image.path,
+            description,
+            createdAt: now,
+            updatedAt: now,
+            userId: user.id,
+        }
+    })
+
+    return res.status(200).json({ post })
+    
+})
+
+app.delete(prefix + '/post', verifyToken, findPost, async (req: Request, res: Response) => {
+    const post = req.post;
+    const user = req.userSession;
+    if (post.userId != user.id) {
+        return res.status(401).json({ error: "Unauthorized." });
+    }
+
+    try {
+        await fs.unlink(post.image_path)
+        await prisma.post.delete({
+            where: {
+                id: post.id
+            }
+        })
+    } catch (err) {
+        console.log(`Can't delete post ${post.id}: ${err}`)
+        return res.status(500).json({ error: "Post can't be deleted." })
+    }
+
+    return res.status(200).json({ message: "Post deleted successfully." })
+})
+
+app.get("/public/:fileName", async (req: Request, res: Response) => {
+  const fileName = req.params.fileName;
+  if (!fileName) {
+    return res.status(404).json({ error: "File name missing!" });
+  }
+  const filePath = path.join(process.cwd(), "uploads", fileName);
+  try {
+    await fs.access(filePath);
+    return res.sendFile(filePath);
+  } catch (err) {
+    return res.status(404).json({ error: "File not found" });
+  }
+});
 
 app.post(prefix + '/post/like', verifyToken, findPost, async (req: Request, res: Response) => {
     const user = req.userSession;
