@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: center;
   padding: 50px;
+  min-height: calc(100vh - 68px);
 
   .login-page-card {
     position: relative;
