@@ -14,6 +14,7 @@ const Feed: FC = () => {
             description:
               "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
             user: { id: 1, username: "user1" },
+            likes: 10,
             createdAt: "2023-10-01T00:00:00.000Z",
             updatedAt: "2023-10-01T00:00:00.000Z",
           }}
