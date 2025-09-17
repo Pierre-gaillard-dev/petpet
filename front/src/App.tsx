@@ -4,6 +4,7 @@ import Feed from "./pages/Feed"
 import Login from "./pages/Login"
 import NavBar from "./components/Navbar"
 import "./App.css"
+import NotFound from "./pages/NotFound"
 
 const App: FC = () => {
   return (
@@ -12,6 +13,7 @@ const App: FC = () => {
       <Routes>
         <Route path="/" element={<Feed />} />
         <Route path="/login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

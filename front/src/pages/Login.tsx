@@ -161,18 +161,20 @@ const Login: FC = () => {
                 required
                 onChange={handleInputChange}
               />
-              {password.length && (
-                <div className="password-requirements">
-                  <div
-                    className={`inner ${
-                      passwordError
-                        ? `error-${passwordError.number}`
-                        : "success"
-                    }`}
-                  />
-                </div>
+              {password.length > 0 && (
+                <>
+                  <div className="password-requirements">
+                    <div
+                      className={`inner ${
+                        passwordError
+                          ? `error-${passwordError.number}`
+                          : "success"
+                      }`}
+                    />
+                  </div>
+                  {passwordError ? passwordError.message : "Mot de passe fort"}
+                </>
               )}
-              {passwordError ? passwordError.message : "Mot de passe fort"}
             </div>
             <div>
               <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
@@ -183,6 +185,11 @@ const Login: FC = () => {
                 required
                 onChange={handleInputChange}
               />
+              {confirmPassword.length > 0 && password !== confirmPassword && (
+                <span className="error">
+                  Les mots de passe ne correspondent pas
+                </span>
+              )}
             </div>
             <button type="submit">S'inscrire</button>
           </form>

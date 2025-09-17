@@ -24,6 +24,10 @@
     }
   }
 
+  .image-container {
+    position: relative;
+  }
+
   .post-description {
     padding: 10px;
     font-size: 14px;
@@ -72,7 +76,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 48px;
     color: var(--primary-color);
     animation: pop 0.5s ease-out;
     pointer-events: none;
