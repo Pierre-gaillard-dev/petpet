@@ -1,0 +1,44 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px;
+  background-color: var(--primary-color);
+  color: white;
+
+  .nav-links {
+    display: flex;
+    gap: 30px;
+
+    a {
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  svg {
+    height: 24px;
+    width: 24px;
+  }
+
+  .profile .popover {
+    right: 0;
+    a {
+      color: #000;
+    }
+  }
+}
