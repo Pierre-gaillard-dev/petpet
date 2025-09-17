@@ -1,2 +1,4 @@
 import type { Post } from "./post.type"
-export type { Post }
+import type { User, UserShort } from "./user.type"
+
+export type { Post, User, UserShort }

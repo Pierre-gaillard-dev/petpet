@@ -1,0 +1,18 @@
+.popover {
+  position: absolute;
+  top: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+}
+
+.popover:not(.open) {
+  display: none;
+}
+
+*:has(> .popover) {
+  position: relative;
+}

@@ -34,4 +34,11 @@
     height: 24px;
     width: 24px;
   }
+
+  .profile .popover {
+    right: 0;
+    a {
+      color: #000;
+    }
+  }
 }
