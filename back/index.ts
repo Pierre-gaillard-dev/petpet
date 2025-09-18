@@ -172,12 +172,10 @@ app.post(prefix + "/login", async (req: Request, res: Response) => {
     maxAge: 30 * 24 * 60 * 60 * 1000,
   })
 
-  return res
-    .status(200)
-    .json({
-      message: "Logged successfully",
-      user: { id: user.id, username: user.username, email: user.email },
-    })
+  return res.status(200).json({
+    message: "Logged successfully",
+    user: { id: user.id, username: user.username, email: user.email },
+  })
 })
 
 app.get(prefix + "/me", verifyToken, async (req: Request, res: Response) => {
@@ -199,7 +197,7 @@ app.post(
     const { description } = req.body
     const image = req.file
     if (!image) {
-      return res.status(403).json({ error: "Missing file image!" })
+      return res.status(400).json({ error: "Missing file image!" })
     }
     const now = new Date()
     const post = await prisma.post.create({
@@ -295,6 +293,10 @@ app.delete(
   async (req: Request, res: Response) => {
     const user = req.userSession
     const post = req.post
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." })
+    }
+
     const likedPost = await prisma.userLike.findFirst({
       where: {
         userId: user!.id,
