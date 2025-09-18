@@ -4,6 +4,7 @@ import "dotenv/config"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser"
+import cors from "cors"
 import multer from "multer"
 import fs from "fs/promises"
 import path from "path"
@@ -28,6 +29,16 @@ const prefix = "/api"
 const prisma = new PrismaClient()
 
 const app = express()
+
+// CORS configuration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Default to Vite's default port
+    credentials: true, // Allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+)
 
 const upload = multer({ storage })
 app.use(express.json())
