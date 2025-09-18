@@ -60,7 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const fetchLikedPosts = async () => {
     try {
       const response = await api.get("/user/likedPosts")
-      setLikedPosts(response.data.map((post: Post) => post.id))
+      setLikedPosts(response.data.posts.map((post: Post) => post.id))
     } catch (error) {
       console.error("Error fetching liked posts:", error)
     }

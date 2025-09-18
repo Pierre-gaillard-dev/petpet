@@ -2,7 +2,7 @@ import type { UserShort } from "./user.type"
 
 interface Post {
   id: number
-  img: string
+  image_path: string
   description: string
   user: UserShort
   likes?: number

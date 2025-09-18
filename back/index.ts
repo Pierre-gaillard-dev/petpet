@@ -184,15 +184,27 @@ app.get(prefix + "/me", verifyToken, async (req: Request, res: Response) => {
 })
 
 app.get(prefix + "/posts", async (req: Request, res: Response) => {
-  const postsData = [];
+  const postsData = []
   const posts = await prisma.post.findMany()
   for (const post of posts) {
     const like = await prisma.userLike.count({
-        where: {
-            postId: post.id
-        }
-    });
-    postsData.push({...post, like});
+      where: {
+        postId: post.id,
+      },
+    })
+    const user = await prisma.user.findFirst({
+      where: {
+        id: post.userId,
+      },
+    })
+    postsData.push({
+      ...post,
+      like,
+      user: {
+        id: user?.id,
+        username: user?.username,
+      },
+    })
   }
   return res.status(200).json({ posts: postsData })
 })
@@ -211,7 +223,7 @@ app.post(
     const now = new Date()
     const post = await prisma.post.create({
       data: {
-        image_path: '/public/' + image.filename,
+        image_path: "/public/" + image.filename,
         description,
         createdAt: now,
         updatedAt: now,

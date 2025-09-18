@@ -3,13 +3,21 @@ import type { Post as PostType } from "../types"
 import "./Post.css"
 import { Paw } from "./Icons"
 import api from "../config/axios"
+import { useUser } from "../contexts/user.context"
 
 interface PostProps {
   post: PostType
 }
 
 const Post: FC<PostProps> = ({ post }) => {
+  const { likedPosts } = useUser()
   const [liked, setLiked] = useState(false)
+
+  useEffect(() => {
+    if (likedPosts && likedPosts.includes(post.id)) {
+      setLiked(true)
+    }
+  }, [likedPosts])
 
   useEffect(() => {
     const likePost = async () => {
@@ -39,6 +47,8 @@ const Post: FC<PostProps> = ({ post }) => {
     setLiked(prev => !prev)
   }
 
+  console.log(post)
+
   const totalLikes = (post.likes ?? 0) + (liked ? 1 : 0)
 
   return (
@@ -49,7 +59,7 @@ const Post: FC<PostProps> = ({ post }) => {
       </div>
       <div className="image-container">
         <img
-          src={post.img}
+          src={`http://localhost:3000${post.image_path}`}
           alt={post.description}
           className="post-image"
           onDoubleClick={handleLike}

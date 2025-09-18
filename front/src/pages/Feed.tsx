@@ -9,7 +9,8 @@ const Feed: FC = () => {
 
   useEffect(() => {
     api.get("/posts").then(response => {
-      setPosts(response.data.posts)
+      const postData: PostType[] = response.data.posts
+      setPosts(postData.sort((a, b) => b.createdAt.localeCompare(a.createdAt)))
     })
   }, [])
 
