@@ -9,6 +9,7 @@ import {
 } from "react"
 import type { Post, User } from "../types"
 import api from "../config/axios"
+import { useNavigate } from "react-router"
 
 type UserContextType = {
   user: User | null
@@ -41,10 +42,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       })
   }, [])
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUser(null)
     localStorage.removeItem("user")
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+    await api.post('/signout');
   }
 
   const handleRegister = (newUser: User) => {
