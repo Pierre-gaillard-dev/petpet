@@ -138,3 +138,10 @@
   color: #eb3d3d;
   margin-top: 10px;
 }
+
+.input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px #d9d9d7 solid;
+  margin-top: 15px;
+}

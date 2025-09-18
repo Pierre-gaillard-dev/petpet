@@ -9,7 +9,7 @@ const Feed: FC = () => {
   
   return (
     <main className="feed">
-      <h1>Les toutous</h1>
+      <h1>Les animaux</h1>
       <div className="feed-content">
         {feed.posts.map(post => (
           <Post key={post.id} post={post} />
