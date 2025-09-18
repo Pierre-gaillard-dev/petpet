@@ -352,3 +352,30 @@ app.get(
     return res.status(200).json({ posts })
   }
 )
+
+app.get(prefix + '/user/notification', verifyToken, async (req: Request, res: Response) => {
+    const user = req.userSession;
+    const results = await prisma.post.findMany({
+        where: { userId: user!.id },
+        select: {
+            id: true,
+            likedBy: {
+                where: { 
+                    userId: { not: user!.id }
+                },
+                select: {
+                    userId: true,
+                    user: { select: { username: true } }
+                }
+            }
+        }
+    })
+    const notifications = results.flatMap(post => {
+        return post.likedBy.map(like => ({
+            postId: post.id,
+            userId: like.userId,
+            username: like.user.username
+        }))
+    })
+    return res.status(200).json({ notifications });
+});
