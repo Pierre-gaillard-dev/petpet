@@ -2,6 +2,8 @@ import { useRef, useState, type FC } from "react"
 import Modal, { type ModalProps } from "./Modal"
 import "./AddPostModal.css"
 import api from "../config/axios"
+import { useFeed } from "../contexts/posts.context"
+import type { Post } from "../types"
 
 interface AddPostModalProps extends Omit<ModalProps, "children"> {}
 
@@ -14,6 +16,8 @@ const AddPostModal: FC<AddPostModalProps> = ({ isOpen, onClose }) => {
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [error, setError] = useState("");
+
+  const feed = useFeed();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -34,6 +38,20 @@ const AddPostModal: FC<AddPostModalProps> = ({ isOpen, onClose }) => {
       if (response.status !== 200) {
         setError("Une erreur est parvenue")
       } else if (response.status === 200) {
+        const postData = response.data.post;
+        const post: Post = {
+          id: postData.id,
+          image_path: postData.image_path,
+          description: postData.description,
+          user: {
+            id: 1,
+            username: postData.username
+          },
+          like: 0,
+          createdAt: postData.createdAt,
+          updatedAt: postData.updatedAt
+        }
+        feed.setPosts(prev => [post, ...prev]);
         onClose();
       }
     } catch (err) {
