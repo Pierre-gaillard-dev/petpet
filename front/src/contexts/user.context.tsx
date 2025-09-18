@@ -8,6 +8,7 @@ import {
   useEffect,
 } from "react"
 import type { User } from "../types"
+import api from "../config/axios"
 
 type UserContextType = {
   user: User | null
@@ -23,10 +24,17 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const localUser = localStorage.getItem("user")
-    if (localUser) {
-      setUser(JSON.parse(localUser))
-    }
+    api
+      .get("/me")
+      .then(response => {
+        setUser(response.data)
+      })
+      .catch(error => {
+        console.error(
+          "Erreur lors de la récupération de l'utilisateur :",
+          error
+        )
+      })
   }, [])
 
   const handleLogout = () => {
