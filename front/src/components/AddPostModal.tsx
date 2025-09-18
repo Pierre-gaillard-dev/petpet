@@ -1,6 +1,7 @@
 import { useRef, useState, type FC } from "react"
 import Modal, { type ModalProps } from "./Modal"
 import "./AddPostModal.css"
+import api from "../config/axios"
 
 interface AddPostModalProps extends Omit<ModalProps, "children"> {}
 
@@ -12,17 +13,33 @@ interface FormPayload {
 const AddPostModal: FC<AddPostModalProps> = ({ isOpen, onClose }) => {
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [error, setError] = useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const formData = new FormData(event.currentTarget)
     const payload: FormPayload = {
       image: formData.get("image") as File | null,
       description: formData.get("description") as string,
     }
-    // TODO: Handle form submission logic here
-    console.log("Form submitted:", payload)
-    onClose()
+    try {
+      const response = await api.post('/post', {
+        image: payload.image,
+        description: payload.description
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      if (response.status !== 200) {
+        setError("Une erreur est parvenue")
+      } else if (response.status === 200) {
+        onClose();
+      }
+    } catch (err) {
+      setError("Une erreur est parvenue")
+      console.log(err);
+    }
     setImagePreview(null)
   }
 
@@ -32,7 +49,6 @@ const AddPostModal: FC<AddPostModalProps> = ({ isOpen, onClose }) => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
-    console.log("Image uploaded:", file)
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
@@ -84,6 +100,10 @@ const AddPostModal: FC<AddPostModalProps> = ({ isOpen, onClose }) => {
           placeholder="Parlez-nous de votre animal"
         />
         <button type="submit">Envoyer</button>
+      
+        <div>
+          { error }
+        </div>
       </form>
     </Modal>
   )
