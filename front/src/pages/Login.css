@@ -129,3 +129,12 @@
     }
   }
 }
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  color: #eb3d3d;
+  margin-top: 10px;
+}
