@@ -4,13 +4,14 @@ import "./Post.css"
 import { Paw } from "./Icons"
 import api from "../config/axios"
 import { useUser } from "../contexts/user.context"
+import { redirect } from "react-router"
 
 interface PostProps {
   post: PostType
 }
 
 const Post: FC<PostProps> = ({ post }) => {
-  const { likedPosts } = useUser()
+  const { user, likedPosts } = useUser()
   const [liked, setLiked] = useState(false)
 
   useEffect(() => {
@@ -34,6 +35,11 @@ const Post: FC<PostProps> = ({ post }) => {
       } catch (err) {
         console.log(err)
       }
+    }
+
+    if (!user) {
+      redirect("/login")
+      return
     }
 
     setLiked(prev => {
@@ -62,7 +68,7 @@ const Post: FC<PostProps> = ({ post }) => {
       </div>
       <div className="image-container">
         <img
-          src={`http://localhost:3000${post.image_path}`}
+          src={`http://10.71.134.157:3000${post.image_path}`}
           alt={post.description}
           className="post-image"
           onDoubleClick={handleLike}
