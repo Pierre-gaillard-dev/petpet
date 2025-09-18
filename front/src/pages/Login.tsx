@@ -1,5 +1,7 @@
 import { useState, type FC, type FormEvent } from "react"
 import "./Login.css"
+import api from "../config/axios"
+import { useNavigate } from "react-router"
 
 interface PasswordRule {
   number: number
@@ -40,6 +42,8 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const Login: FC = () => {
   const [shownSide, setShownSide] = useState<"login" | "register">("register")
 
+  const [errorValue, setErrorValue] = useState("");
+
   const [passwordError, setPasswordError] = useState<PasswordRule | null>(null)
   const [emailError, setEmailError] = useState<boolean>(false)
 
@@ -50,6 +54,29 @@ const Login: FC = () => {
 
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
+
+  const navigate = useNavigate();
+
+  const loginUser = async (email: string, password: string) => {
+    try {
+      const response = await api.post('/login', {
+        email,
+        password
+      });
+
+      if (response.status === 200) {
+        console.log('aaaaa');
+        navigate("/");
+      }
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        setErrorValue('Mauvais email ou mot de passe');
+      } else {
+        console.error("Erreur inattendue :", error);
+        setErrorValue('Une erreur est survenue');
+      }
+    }
+  };
 
   const checkEmailValidity = (email: string) => {
     if (email.length === 0) {
@@ -105,23 +132,44 @@ const Login: FC = () => {
     }
   }
 
-  const handleRegister = (e: FormEvent) => {
-    e.preventDefault()
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+
     if (password !== confirmPassword) {
-      alert("Les mots de passe ne correspondent pas")
-      return
+      alert("Les mots de passe ne correspondent pas");
+      return;
     }
 
-    const payload = { username, email, password }
-  }
+    const payload = { username, email, password };
 
-  const handleLogin = (e: FormEvent) => {
+    try {
+      const response = await api.post('/register', payload);
+
+      if (response.status === 200) {
+        setErrorValue('');
+        await loginUser(email, password);
+      }
+    } catch (error: any) {
+      if (error.response?.status === 400) {
+        setErrorValue('Ce compte existe déjà !');
+      } else {
+        console.error(error);
+        setErrorValue('La requête n\'a pas pu aboutir');
+      }
+    }
+  };
+
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
 
     const payload = { email: loginEmail, password: loginPassword }
+    setErrorValue('');
+    await loginUser(payload.email, payload.password);
   }
 
   const handleToggle = () => {
+    setErrorValue("");
     setShownSide(shownSide === "login" ? "register" : "login")
   }
 
@@ -192,6 +240,9 @@ const Login: FC = () => {
               )}
             </div>
             <button type="submit">S'inscrire</button>
+            <span className="error">
+              { errorValue }
+            </span>
           </form>
         </div>
         <div className="login">
@@ -218,6 +269,9 @@ const Login: FC = () => {
               />
             </div>
             <button type="submit">Se connecter</button>
+            <span className="error">
+              { errorValue }
+            </span>
           </form>
         </div>
         <div className={`hider ${shownSide}`}>
