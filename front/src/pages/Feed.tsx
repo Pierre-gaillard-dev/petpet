@@ -1,8 +1,6 @@
-import { useEffect, useState, type FC } from "react"
+import { type FC } from "react"
 import Post from "../components/Post"
 import "./Feed.css"
-import type { Post as PostType } from "../types"
-import api from "../config/axios"
 import { useFeed } from "../contexts/posts.context"
 
 const Feed: FC = () => {

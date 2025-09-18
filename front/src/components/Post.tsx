@@ -58,10 +58,10 @@ const Post: FC<PostProps> = ({ post }) => {
     <article className={`post ${liked ? "liked" : ""}`}>
       <div className="post-header">
         <h2>{post.user.username}</h2>
-        <p>{new Date(post.createdAt).toLocaleDateString()}</p>
+        <p className="date">{new Date(post.createdAt).toLocaleDateString()}</p>
       </div>
       <div className="image-container">
-        <img
+          <img
           src={`http://localhost:3000${post.image_path}`}
           alt={post.description}
           className="post-image"
@@ -71,10 +71,10 @@ const Post: FC<PostProps> = ({ post }) => {
           <Paw />
         </div>
       </div>
-      <p className="post-description">{post.description}</p>
+      <p className="post-description">« {post.description} »</p>
       <div className="like-section">
         <a onClick={handleLike}>
-          {totalLikes > 0 && <span>{totalLikes}</span>}
+          <span className="like-count">{totalLikes}</span>
           <Paw />
         </a>
       </div>
