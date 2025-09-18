@@ -178,6 +178,11 @@ app.post(prefix + "/login", async (req: Request, res: Response) => {
   })
 })
 
+app.post(prefix + "/signout", verifyToken, async (req: Request, res: Response) => {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Sign-out successfully."})
+})
+
 app.get(prefix + "/me", verifyToken, async (req: Request, res: Response) => {
   const user = req.userSession
   return res.status(200).json({ user })
