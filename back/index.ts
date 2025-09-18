@@ -136,6 +136,11 @@ app.post(prefix + '/login', async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Logged successfully" })
 });
 
+app.get(prefix + '/me', verifyToken, async (req: Request, res: Response) => {
+    const user = req.userSession;
+    return res.status(200).json({ user });
+});
+
 app.get(prefix + '/posts', async (req: Request, res: Response) => {
     const posts = await prisma.post.findMany();
     return res.status(200).json({ posts })
