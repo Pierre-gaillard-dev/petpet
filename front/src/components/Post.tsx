@@ -1,7 +1,8 @@
-import { useState, type FC } from "react"
+import { useEffect, useState, type FC } from "react"
 import type { Post as PostType } from "../types"
 import "./Post.css"
 import { Paw } from "./Icons"
+import api from "../config/axios"
 
 interface PostProps {
   post: PostType
@@ -9,6 +10,30 @@ interface PostProps {
 
 const Post: FC<PostProps> = ({ post }) => {
   const [liked, setLiked] = useState(false)
+
+  useEffect(() => {
+    const likePost = async () => {
+      try {
+        await api.post("/post/like", { postId: post.id })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    const unlikePost = async () => {
+      try {
+        await api.delete("/post/like", { data: { postId: post.id } })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    if (liked) {
+      void likePost()
+    } else {
+      void unlikePost()
+    }
+  }, [liked])
 
   const handleLike = () => {
     setLiked(prev => !prev)
