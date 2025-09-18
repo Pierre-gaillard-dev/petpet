@@ -50,14 +50,28 @@ async function verifyPasswordUser(
   email: string,
   password: string
 ): Promise<User | null> {
+  // Validate input parameters
+  if (!email || !password) {
+    return null
+  }
+
   const user = await prisma.user.findFirst({
     where: {
       email,
     },
   })
-  if (!user) return null
-  const success = await bcrypt.compare(password, user.password)
-  return success ? user : null
+
+  if (!user || !user.password) {
+    return null
+  }
+
+  try {
+    const success = await bcrypt.compare(password, user.password)
+    return success ? user : null
+  } catch (error) {
+    console.error("Error comparing passwords:", error)
+    return null
+  }
 }
 
 async function verifyToken(req: Request, res: Response, next: NextFunction) {
@@ -98,6 +112,13 @@ async function findPost(req: Request, res: Response, next: NextFunction) {
 app.post(prefix + "/register", async (req: Request, res: Response) => {
   const { email, username, password } = req.body
 
+  // Validate required fields
+  if (!email || !username || !password) {
+    return res
+      .status(400)
+      .json({ error: "Email, username, and password are required." })
+  }
+
   const hashedPassword = await bcrypt.hash(String(password), 10)
   try {
     const existingUser = await prisma.user.findFirst({
@@ -127,6 +148,12 @@ app.post(prefix + "/register", async (req: Request, res: Response) => {
 
 app.post(prefix + "/login", async (req: Request, res: Response) => {
   const { email, password } = req.body
+
+  // Validate required fields
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." })
+  }
+
   const user = await verifyPasswordUser(email, password)
   if (!user) {
     res.status(403).json({ message: "Wrong email or password." })
