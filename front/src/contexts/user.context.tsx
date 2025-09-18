@@ -30,7 +30,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     api
       .get("/me")
       .then(response => {
-        setUser(response.data)
+        setUser(response.data.user)
         fetchLikedPosts()
       })
       .catch(error => {
@@ -44,7 +44,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const handleLogout = async () => {
     setUser(null)
     localStorage.removeItem("user")
-    await api.post('/signout');
+    await api.post("/signout")
   }
 
   const handleRegister = (newUser: User) => {
