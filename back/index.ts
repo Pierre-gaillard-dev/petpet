@@ -226,7 +226,7 @@ app.post(
       return res.status(400).json({ error: "Missing file image!" })
     }
     const now = new Date()
-    const post = await prisma.post.create({
+    const postResponse = await prisma.post.create({
       data: {
         image_path: "/public/" + image.filename,
         description,
@@ -235,6 +235,11 @@ app.post(
         userId: user!.id,
       },
     })
+
+    const post = {
+        ...postResponse,
+        username: user?.username
+    }
 
     return res.status(200).json({ post })
   }

@@ -9,7 +9,6 @@ import {
 } from "react"
 import type { Post, User } from "../types"
 import api from "../config/axios"
-import { useNavigate } from "react-router"
 
 type UserContextType = {
   user: User | null
