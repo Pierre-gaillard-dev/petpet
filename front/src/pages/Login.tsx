@@ -2,6 +2,7 @@ import { useState, type FC, type FormEvent } from "react"
 import "./Login.css"
 import api from "../config/axios"
 import { useNavigate } from "react-router"
+import { useUser } from "../contexts/user.context"
 
 interface PasswordRule {
   number: number
@@ -40,9 +41,11 @@ const passwordRules: PasswordRule[] = [
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const Login: FC = () => {
+  const { handleLogin: saveUser } = useUser()
+
   const [shownSide, setShownSide] = useState<"login" | "register">("register")
 
-  const [errorValue, setErrorValue] = useState("");
+  const [errorValue, setErrorValue] = useState("")
 
   const [passwordError, setPasswordError] = useState<PasswordRule | null>(null)
   const [emailError, setEmailError] = useState<boolean>(false)
@@ -55,28 +58,28 @@ const Login: FC = () => {
   const [loginEmail, setLoginEmail] = useState("")
   const [loginPassword, setLoginPassword] = useState("")
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const loginUser = async (email: string, password: string) => {
     try {
-      const response = await api.post('/login', {
+      const response = await api.post("/login", {
         email,
-        password
-      });
+        password,
+      })
 
       if (response.status === 200) {
-        console.log('aaaaa');
-        navigate("/");
+        saveUser?.(response.data.user)
+        navigate("/")
       }
     } catch (error: any) {
       if (error.response?.status === 403) {
-        setErrorValue('Mauvais email ou mot de passe');
+        setErrorValue("Mauvais email ou mot de passe")
       } else {
-        console.error("Erreur inattendue :", error);
-        setErrorValue('Une erreur est survenue');
+        console.error("Erreur inattendue :", error)
+        setErrorValue("Une erreur est survenue")
       }
     }
-  };
+  }
 
   const checkEmailValidity = (email: string) => {
     if (email.length === 0) {
@@ -133,43 +136,42 @@ const Login: FC = () => {
   }
 
   const handleRegister = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (password !== confirmPassword) {
-      alert("Les mots de passe ne correspondent pas");
-      return;
+      alert("Les mots de passe ne correspondent pas")
+      return
     }
 
-    const payload = { username, email, password };
+    const payload = { username, email, password }
 
     try {
-      const response = await api.post('/register', payload);
+      const response = await api.post("/register", payload)
 
       if (response.status === 200) {
-        setErrorValue('');
-        await loginUser(email, password);
+        setErrorValue("")
+        await loginUser(email, password)
       }
     } catch (error: any) {
       if (error.response?.status === 400) {
-        setErrorValue('Ce compte existe déjà !');
+        setErrorValue("Ce compte existe déjà !")
       } else {
-        console.error(error);
-        setErrorValue('La requête n\'a pas pu aboutir');
+        console.error(error)
+        setErrorValue("La requête n'a pas pu aboutir")
       }
     }
-  };
-
+  }
 
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault()
 
     const payload = { email: loginEmail, password: loginPassword }
-    setErrorValue('');
-    await loginUser(payload.email, payload.password);
+    setErrorValue("")
+    await loginUser(payload.email, payload.password)
   }
 
   const handleToggle = () => {
-    setErrorValue("");
+    setErrorValue("")
     setShownSide(shownSide === "login" ? "register" : "login")
   }
 
@@ -240,9 +242,7 @@ const Login: FC = () => {
               )}
             </div>
             <button type="submit">S'inscrire</button>
-            <span className="error">
-              { errorValue }
-            </span>
+            <span className="error">{errorValue}</span>
           </form>
         </div>
         <div className="login">
@@ -269,9 +269,7 @@ const Login: FC = () => {
               />
             </div>
             <button type="submit">Se connecter</button>
-            <span className="error">
-              { errorValue }
-            </span>
+            <span className="error">{errorValue}</span>
           </form>
         </div>
         <div className={`hider ${shownSide}`}>

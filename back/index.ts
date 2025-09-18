@@ -172,7 +172,12 @@ app.post(prefix + "/login", async (req: Request, res: Response) => {
     maxAge: 30 * 24 * 60 * 60 * 1000,
   })
 
-  return res.status(200).json({ message: "Logged successfully" })
+  return res
+    .status(200)
+    .json({
+      message: "Logged successfully",
+      user: { id: user.id, username: user.username, email: user.email },
+    })
 })
 
 app.get(prefix + "/me", verifyToken, async (req: Request, res: Response) => {
