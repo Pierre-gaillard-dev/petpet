@@ -19,7 +19,7 @@ const Post: FC<PostProps> = ({ post }) => {
     }
   }, [likedPosts])
 
-  useEffect(() => {
+  const handleLike = () => {
     const likePost = async () => {
       try {
         await api.post("/post/like", { postId: post.id })
@@ -36,20 +36,23 @@ const Post: FC<PostProps> = ({ post }) => {
       }
     }
 
-    if (liked) {
-      void likePost()
-    } else {
-      void unlikePost()
-    }
-  }, [liked])
-
-  const handleLike = () => {
-    setLiked(prev => !prev)
+    setLiked(prev => {
+      const newLike = !prev
+      if (newLike) {
+        likePost()
+      } else {
+        unlikePost()
+      }
+      return newLike
+    })
   }
 
   console.log(post)
 
-  const totalLikes = (post.likes ?? 0) + (liked ? 1 : 0)
+  const totalLikes =
+    (post.like ?? 0) +
+    (liked ? 1 : 0) -
+    (likedPosts && likedPosts.includes(post.id) ? 1 : 0)
 
   return (
     <article className={`post ${liked ? "liked" : ""}`}>

@@ -5,7 +5,7 @@ interface Post {
   image_path: string
   description: string
   user: UserShort
-  likes?: number
+  like?: number
   createdAt: string
   updatedAt: string
 }

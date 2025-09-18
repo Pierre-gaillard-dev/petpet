@@ -4,7 +4,6 @@
   overflow-y: auto;
   color: #000;
   border-radius: 4px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .popover:has(.notification-popover) {

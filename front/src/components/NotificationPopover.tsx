@@ -27,7 +27,7 @@ const NotificationPopover: FC<NotificationPopoverProps> = ({
   }, [])
 
   return (
-    <Popover isOpen={isOpen} onClose={onClose}>
+    <Popover isOpen={isOpen && notifications.length > 0} onClose={onClose}>
       <div className="notification-popover">
         {notifications.map(notification => (
           <div
@@ -35,6 +35,7 @@ const NotificationPopover: FC<NotificationPopoverProps> = ({
             className="notification-item"
           >
             <span className="notification-username">
+              Vous avez reçu une demande de caresse de la part de{" "}
               {notification.username}
             </span>
           </div>
