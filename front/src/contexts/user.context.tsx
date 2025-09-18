@@ -7,27 +7,31 @@ import {
   type SetStateAction,
   useEffect,
 } from "react"
-import type { User } from "../types"
+import type { Post, User } from "../types"
 import api from "../config/axios"
 
 type UserContextType = {
   user: User | null
+  likedPosts: number[]
   setUser: Dispatch<SetStateAction<User | null>>
-  handleLogout?: () => void
-  handleRegister?: (newUser: User) => void
-  handleLogin?: (updatedUser: User) => void
+  handleLogout: () => void
+  handleRegister: (newUser: User) => void
+  handleLogin: (updatedUser: User) => void
+  fetchLikedPosts: () => void
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [likedPosts, setLikedPosts] = useState<number[]>([])
 
   useEffect(() => {
     api
       .get("/me")
       .then(response => {
         setUser(response.data)
+        fetchLikedPosts()
       })
       .catch(error => {
         console.error(
@@ -50,11 +54,29 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const handleLogin = (updatedUser: User) => {
     setUser(updatedUser)
     localStorage.setItem("user", JSON.stringify(updatedUser))
+    fetchLikedPosts()
+  }
+
+  const fetchLikedPosts = async () => {
+    try {
+      const response = await api.get("/user/likedPosts")
+      setLikedPosts(response.data.map((post: Post) => post.id))
+    } catch (error) {
+      console.error("Error fetching liked posts:", error)
+    }
   }
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, handleLogout, handleRegister, handleLogin }}
+      value={{
+        user,
+        likedPosts,
+        setUser,
+        handleLogout,
+        handleRegister,
+        handleLogin,
+        fetchLikedPosts,
+      }}
     >
       {children}
     </UserContext.Provider>
