@@ -187,6 +187,8 @@ const Login: FC = () => {
                 type="text"
                 id="username"
                 name="username"
+                placeholder="Entrez votre nom d'utilisateur"
+                className="input"
                 required
                 onChange={handleInputChange}
               />
@@ -196,7 +198,9 @@ const Login: FC = () => {
               <input
                 type="email"
                 id="email"
+                placeholder="Entrez votre email"
                 name="email"
+                className="input"
                 required
                 onChange={handleInputChange}
               />
@@ -208,6 +212,8 @@ const Login: FC = () => {
                 type="password"
                 id="password"
                 name="password"
+                placeholder="Entrez votre mot de passe"
+                className="input"
                 required
                 onChange={handleInputChange}
               />
@@ -232,6 +238,8 @@ const Login: FC = () => {
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
+                placeholder="Confirmez votre mot de passe"
+                className="input"
                 required
                 onChange={handleInputChange}
               />
@@ -254,6 +262,8 @@ const Login: FC = () => {
                 type="email"
                 id="loginEmail"
                 name="loginEmail"
+                className="input"
+                placeholder="Entrez votre email"
                 required
                 onChange={handleInputChange}
               />
@@ -264,6 +274,8 @@ const Login: FC = () => {
                 type="password"
                 id="loginPassword"
                 name="loginPassword"
+                placeholder="Entrez votre mot de passe"
+                className="input"
                 required
                 onChange={handleInputChange}
               />
