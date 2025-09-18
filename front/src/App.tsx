@@ -6,11 +6,13 @@ import NavBar from "./components/Navbar"
 import "./App.css"
 import NotFound from "./pages/NotFound"
 import Footer from "./components/Footer"
+import Background from "./components/Background"
 
 const App: FC = () => {
   return (
     <BrowserRouter>
       <NavBar />
+      <Background />
       <Routes>
         <Route path="/" element={<Feed />} />
         <Route path="/login" element={<Login />} />
