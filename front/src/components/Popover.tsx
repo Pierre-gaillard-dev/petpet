@@ -1,7 +1,7 @@
 import { useEffect, type FC } from "react"
 import "./Popover.css"
 
-interface PopoverProps {
+export interface PopoverProps {
   isOpen?: boolean
   onClose?: () => void
   children: React.ReactNode

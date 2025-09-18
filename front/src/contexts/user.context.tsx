@@ -44,6 +44,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const handleLogout = () => {
     setUser(null)
     localStorage.removeItem("user")
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
   }
 
   const handleRegister = (newUser: User) => {

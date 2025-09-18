@@ -5,12 +5,14 @@ import AddPostModal from "./AddPostModal"
 import Popover from "./Popover"
 import { useUser } from "../contexts/user.context"
 import { Link } from "react-router"
+import NotificationPopover from "./NotificationPopover"
 
 const Navbar: FC = () => {
   const { user, handleLogout } = useUser()
 
   const [isUserPopoverOpen, setIsUserPopoverOpen] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isNotifPopoverOpen, setIsNotifPopoverOpen] = useState(false)
 
   const handleAddClick = () => {
     setIsAddModalOpen(true)
@@ -21,8 +23,11 @@ const Navbar: FC = () => {
   }
 
   const handleNotifClick = () => {
-    // Logic to open the notifications panel goes here
-    console.log("Notifications button clicked")
+    setIsNotifPopoverOpen(prev => !prev)
+  }
+
+  const handleNotifPopoverClose = () => {
+    setIsNotifPopoverOpen(false)
   }
 
   const handleProfileClick = () => {
@@ -58,6 +63,10 @@ const Navbar: FC = () => {
               </a>
               <a onClick={handleNotifClick}>
                 <Bell />
+                <NotificationPopover
+                  isOpen={isNotifPopoverOpen}
+                  onClose={handleNotifPopoverClose}
+                />
               </a>
             </>
           )}
