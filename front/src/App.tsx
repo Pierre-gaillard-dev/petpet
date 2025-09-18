@@ -5,6 +5,7 @@ import Login from "./pages/Login"
 import NavBar from "./components/Navbar"
 import "./App.css"
 import NotFound from "./pages/NotFound"
+import Footer from "./components/Footer"
 
 const App: FC = () => {
   return (
@@ -15,6 +16,7 @@ const App: FC = () => {
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   )
 }
