@@ -1,4 +1,4 @@
-import { useState, type FC } from "react"
+import { useEffect, useRef, useState, type FC } from "react"
 import { Bell, Paw, Plus, Profile } from "./Icons"
 import "./NavBar.css"
 import AddPostModal from "./AddPostModal"
@@ -10,9 +10,34 @@ import NotificationPopover from "./NotificationPopover"
 const Navbar: FC = () => {
   const { user, handleLogout } = useUser()
 
+  const navbarRef = useRef<HTMLDivElement>(null)
+  const windowScrollY = useRef(window.scrollY)
+
+  const [distanceFromTop, setDistanceFromTop] = useState(0)
+
   const [isUserPopoverOpen, setIsUserPopoverOpen] = useState(false)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isNotifPopoverOpen, setIsNotifPopoverOpen] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (navbarRef.current) {
+        const currentScrollY = window.scrollY
+        setDistanceFromTop(prev =>
+          Math.min(
+            Math.max(prev + currentScrollY - windowScrollY.current, 0),
+            navbarRef.current!.offsetHeight
+          )
+        )
+        windowScrollY.current = currentScrollY
+      }
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
 
   const handleAddClick = () => {
     setIsAddModalOpen(true)
@@ -48,8 +73,12 @@ const Navbar: FC = () => {
   }
 
   return (
-    <>
-      <div className="navbar">
+    <section className="navbar-container">
+      <div
+        className={`navbar`}
+        ref={navbarRef}
+        style={{ top: -distanceFromTop }}
+      >
         <Link className="logo" to="/">
           PetPet
           <Paw />
@@ -86,7 +115,7 @@ const Navbar: FC = () => {
       </div>
 
       <AddPostModal isOpen={isAddModalOpen} onClose={handleAddModalClose} />
-    </>
+    </section>
   )
 }
 
